@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class RotationDiagram2D : MonoBehaviour
 {
@@ -41,13 +42,36 @@ public class RotationDiagram2D : MonoBehaviour
             //子项要做的事情放到子类脚本中去处理
             itemTemp.SetParent(transform);
             itemTemp.SetSprite(sprite);
+            itemTemp.AddMovingListener(Change);
             _items.Add(itemTemp);
         }
         Destroy(template);
     }
 
+    public void Change(float offsetX)
+    {
+        int symbol = offsetX > 0 ? 1 : -1;
+        Change(symbol);
+    }
+
+    public void Change(int symbol)
+    {
+        foreach (RotationDiagramItem item in _items)
+        {
+            item.ChangePosId(symbol, _items.Count);
+        }
+
+        for (int i = 0; i < _items.Count; i++)
+        {
+            _items[i].SetPosData(_posData[_items[i].PosId]);
+
+        }
+    }
+
     private void CalculateData()
     {
+        List<ItemData> itemDatas = new List<ItemData>();
+
         //椭圆的周长计算
         float length = (ItemSize.x + Offset) * _items.Count;
         //每个sprite之间的比例差值
@@ -55,10 +79,24 @@ public class RotationDiagram2D : MonoBehaviour
 
         for (int i = 0; i < _items.Count; i++)
         {
+            ItemData itemData = new ItemData();
+            itemData.PosId = i;
+            itemDatas.Add(itemData);
+
+            _items[i].PosId = i;
+
             ItemPosData data = new ItemPosData();
             data.X = GetX(ratioOffset * i, length);
             data.ScaleTimes = GetScaleTimes(ratioOffset * i, ScaleTimesMax, ScaleTimesMin);
             _posData.Add(data);
+        }
+
+        itemDatas = itemDatas.OrderBy(item => _posData[item.PosId].ScaleTimes).ToList();
+
+        for (int i = 0; i < itemDatas.Count; i++)
+        {
+            itemDatas[i].OrderId = i + 1;
+            _posData[itemDatas[i].PosId].Order = i;
         }
     }
 
@@ -110,8 +148,15 @@ public class RotationDiagram2D : MonoBehaviour
         }
     }
 }
-public struct ItemPosData
+public class ItemPosData
 {
     public float X;
     public float ScaleTimes;
+    public int Order;
+}
+
+public class ItemData
+{
+    public int PosId;
+    public int OrderId;
 }
