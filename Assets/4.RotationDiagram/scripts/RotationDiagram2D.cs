@@ -23,6 +23,9 @@ public class RotationDiagram2D : MonoBehaviour
         SetItemData();
     }
 
+    /// <summary>
+    /// 创建子项模板，添加共同组件
+    /// </summary>
     private GameObject CreateTemplate()
     {
         GameObject item = new GameObject("Template");
@@ -38,6 +41,7 @@ public class RotationDiagram2D : MonoBehaviour
         RotationDiagramItem itemTemp = null;
         foreach (Sprite sprite in ItemSprites)
         {
+            //实例化模板，对子项个性化赋值
             itemTemp = Instantiate(template).GetComponent<RotationDiagramItem>();
             //子项要做的事情放到子类脚本中去处理
             itemTemp.SetParent(transform);
@@ -56,11 +60,13 @@ public class RotationDiagram2D : MonoBehaviour
 
     public void Change(int symbol)
     {
+        //遍历所有子项，根据symbol方向对自身PosId进行调整
         foreach (RotationDiagramItem item in _items)
         {
             item.ChangePosId(symbol, _items.Count);
         }
 
+        //根据调整后的PosId对每个子项进行位置赋值
         for (int i = 0; i < _items.Count; i++)
         {
             _items[i].SetPosData(_posData[_items[i].PosId]);
