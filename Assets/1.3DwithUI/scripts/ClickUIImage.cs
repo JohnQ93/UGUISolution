@@ -24,6 +24,8 @@ public class ClickUIImage : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         ChangeColor();
+
+        //将第一个UI的点击事件往后传递
         ExecuteAll(eventData);
     }
 
