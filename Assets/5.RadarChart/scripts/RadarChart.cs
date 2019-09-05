@@ -133,6 +133,7 @@ public class RadarChart : Image
     }
 
     private void SetHandlerPos()
+
     {
         if(_handlerRatio == null || _handlerRatio.Length != _pointCount)
         {
