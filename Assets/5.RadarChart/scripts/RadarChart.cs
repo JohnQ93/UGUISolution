@@ -34,6 +34,7 @@ public class RadarChart : Image
 
     private void AddVerts(VertexHelper vh)
     {
+        vh.AddVert(Vector3.zero, color, Vector2.zero);
         foreach (RadarChartHandler handler in _handlers)
         {
             vh.AddVert(handler.transform.localPosition, color, Vector2.zero);
@@ -42,10 +43,11 @@ public class RadarChart : Image
 
     private void AddTriangle(VertexHelper vh)
     {
-        for (int i = 1; i < _pointCount - 1; i++)
+        for (int i = 0; i < _pointCount - 1; i++)
         {
-            vh.AddTriangle(0, i + 1, i);
+            vh.AddTriangle(0, i + 1, i + 2);
         }
+        vh.AddTriangle(0, _pointCount, 1);
     }
 
     public void InitPoints()
