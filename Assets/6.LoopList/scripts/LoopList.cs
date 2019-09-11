@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LoopList : MonoBehaviour
 {
@@ -16,13 +17,25 @@ public class LoopList : MonoBehaviour
         _models = new List<LoopListItemModel>();
         //获取列表数据
         GetModel();
-
+        //获取content节点
         _content = transform.Find("Viewport/Content").GetComponent<RectTransform>();
+        //获取最多可显示的子项数量，并实例化
         GameObject item = Resources.Load<GameObject>("LoopListItem");
         _itemHeight = item.GetComponent<RectTransform>().rect.height;
         int num = GetShowItemNum(_itemHeight, _offsetY);
-        SpawnIten(num, item);
+        SpawnItem(num, item);
+
         SetContentSize();
+
+        transform.GetComponent<ScrollRect>().onValueChanged.AddListener(ValueChanged);
+    }
+
+    private void ValueChanged(Vector2 data)
+    {
+        foreach (LoopListItem item in _items)
+        {
+            item.OnValueChange();
+        }
     }
 
     private int GetShowItemNum(float itemHeight, float offset)
@@ -32,7 +45,7 @@ public class LoopList : MonoBehaviour
         return Mathf.CeilToInt(height / (itemHeight + offset)) + 1;  //CeilToInt大于等于当前值的整数，额外加一需要多显示一个
     }
 
-    private void SpawnIten(int num, GameObject itemPrefab)
+    private void SpawnItem(int num, GameObject itemPrefab)
     {
         GameObject temp = null;
         LoopListItem itemTemp = null;
@@ -40,6 +53,8 @@ public class LoopList : MonoBehaviour
         {
             temp = Instantiate(itemPrefab, _content);
             itemTemp = temp.AddComponent<LoopListItem>();
+            itemTemp.AddGetDataListener((index) => _models[index]);
+            itemTemp.init(i, _offsetY, num);
             _items.Add(itemTemp);
         }
     }
