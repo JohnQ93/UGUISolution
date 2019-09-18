@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoopListItemModel : MonoBehaviour
+public struct LoopListItemModel
 {
     public Sprite Icon;
     public string Describe;
@@ -11,5 +11,5 @@ public class LoopListItemModel : MonoBehaviour
     {
         Icon = icon;
         Describe = describe;
-    } 
+    }
 }

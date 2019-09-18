@@ -53,10 +53,18 @@ public class LoopList : MonoBehaviour
         {
             temp = Instantiate(itemPrefab, _content);
             itemTemp = temp.AddComponent<LoopListItem>();
-            itemTemp.AddGetDataListener((index) => _models[index]);
+            itemTemp.AddGetDataListener(GetData);
             itemTemp.init(i, _offsetY, num);
             _items.Add(itemTemp);
         }
+    }
+
+    private LoopListItemModel GetData(int index)
+    {
+        if (index < 0 || index > _models.Count - 1)
+            return new LoopListItemModel();
+
+        return _models[index];
     }
 
     //从外部获取数据暂存
